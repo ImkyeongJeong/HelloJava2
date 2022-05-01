@@ -1,50 +1,78 @@
 package co.micol.prj.game;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Lotto {
-	// 배열 / 1게임: 1000 / 1~45 숫자6개 추출 / 금액입력 받고 몇 게임인가 / Arraylist, sort/ 출력: 1장당 5게임
+	// 1게임: 1000원 / 1~45 숫자6개 추출 중복X
+	// lotto번호 비교 후 금주번호, 내번호, 맞는 번호 출력
 	private Scanner sc = new Scanner(System.in);
 	private int[] lotto = new int[6];
-	private int money;
+	private int[] userLotto = new int[6];
 	
-	private void lottoTitle() {
-		System.out.println("================");
-		System.out.println("로또게임을 시작합니다.");
-		System.out.println("================");
-	}
 	
-	private void lottoGame() {
-		lottoTitle();
-		System.out.println("금액을 입력하세요.");
-		int money = sc.nextInt();
-		int game = money/1000;
+	private void insertMoney() {
+		System.out.println("금액을 입력하세요. (1게임당 1,000원)");
+		int gameMoney = sc.nextInt();
 		
-		//game 수
-		for (int i = 0; i < game; i++) {
-			//랜덤숫자 추출
-			for (int j = 0; j < lotto.length; j++) {
-				lotto[j] = (int)(Math.random()*45)+1;
-				//중복값 처리
-				for (int k = 0; k < j; k++) {
-					if(lotto[j]==lotto[k]) {
+		if(gameMoney < 1000) {
+			System.out.println("금액이 부족합니다. (1게임당 1,000원");
+		} else {
+			System.out.println(gameMoney/1000 + "회 진행합니다.");
+			for (int i = 0; i < gameMoney/1000; i++) {
+				System.out.println("1~45범위의 숫자를 6개를 입력해주세요.");
+				for (int j = 0; j < userLotto.length; j++) {
+					int userNum = sc.nextInt();
+					if(userNum <= 45) {
+						userLotto[j] = userNum;
+					} else {
+						System.out.println("범위를 벗어난 숫자입니다.");
 						j--;
-						break;
 					}
 				}
 				
+				lottoNum();
+				System.out.println("사용자 선택 번호");
+				for (int j = 0; j < userLotto.length; j++) {
+					System.out.print(userLotto[j] + " ");
+				}
+				System.out.println();
+				System.out.println("-----------------");
+				System.out.println("일치하는 번호");
+				for (int j = 0; j < lotto.length; j++) {
+					for (int k = 0; k < userLotto.length; k++) {
+						if(lotto[j] == userLotto[k]) {
+							System.out.print(userLotto[k] + " ");
+						}
+					}
+				}
 			}
-			System.out.println(i+"번째 로또 출력 : ");
-			for (int j = 0; j < lotto.length; j++) {
-				System.out.print(lotto[j] + " ");
-			}
-			System.out.println();
 		}
 	}
-
-
+	
+	//시스템 로또 번호 생성
+	private void lottoNum() {
+		for (int i = 0; i < lotto.length; i++) {
+			lotto[i] = (int)(Math.random()*45) + 1;
+			for (int j = 0; j < i; j++) {
+				if(lotto[i] == lotto[j]) {
+					i--;
+					break;
+				}
+			}
+		}
+		System.out.println("-----------------");
+		System.out.println("금주의 로또 번호");
+		Arrays.sort(lotto);
+		for (int j = 0; j < lotto.length; j++) {
+			System.out.print(lotto[j] + " ");
+		}
+		System.out.println();
+		System.out.println("-----------------");
+	}
+	
 	public void run() {
-		lottoGame();
+		insertMoney();
 		System.out.println();
 	}
 }
